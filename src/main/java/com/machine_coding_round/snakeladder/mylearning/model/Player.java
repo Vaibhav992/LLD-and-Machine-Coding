@@ -1,8 +1,13 @@
 package com.machine_coding_round.snakeladder.mylearning.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
 public class Player {
     private final String id;
     private final String name;
+    @Setter
     private int position;
 
     public Player(String id, String name) {
@@ -11,23 +16,7 @@ public class Player {
         }
         this.id = id;
         this.name = name;
-        this.position = 0; // off the board / start
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
+        this.position = 0;
     }
 
     @Override

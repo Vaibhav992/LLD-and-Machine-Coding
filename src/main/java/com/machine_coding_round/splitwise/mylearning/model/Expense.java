@@ -1,16 +1,20 @@
 package com.machine_coding_round.splitwise.mylearning.model;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class Expense {
     private final String id;
     private final double amount;
     private final String description;
     private final String paidByUserId;
     private final SplitType splitType;
+    @Getter(lombok.AccessLevel.NONE)
     private final List<Split> splits;
     private final String groupId;
     private final LocalDateTime createdAt;
@@ -27,35 +31,7 @@ public class Expense {
         this.createdAt = LocalDateTime.now();
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getPaidByUserId() {
-        return paidByUserId;
-    }
-
-    public SplitType getSplitType() {
-        return splitType;
-    }
-
     public List<Split> getSplits() {
         return Collections.unmodifiableList(splits);
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

@@ -1,17 +1,15 @@
 package com.machine_coding_round.splitwise.forInterview.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class Split {
     private final String userId;
+    @Setter
     private double amount;
-
-    public Split(String userId) { this.userId = userId; }
-
-    public Split(String userId, double amount) {
-        this.userId = userId;
-        this.amount = amount;
-    }
-
-    public String getUserId() { return userId; }
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
 }

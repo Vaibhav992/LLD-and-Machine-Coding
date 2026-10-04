@@ -268,7 +268,30 @@ snakeladder/
 
 ---
 
-## 10. Extensions
+## 10. Concurrency
+
+Snake & Ladder is **turn-based**. The shared state is the turn queue + player positions + status/winner.
+
+### What can race
+
+| Scenario | Risk |
+| --- | --- |
+| Two threads call `playTurn()` | Both `poll` same player / corrupt queue |
+| Read `getWinner()` while turn updates | Stale / null winner |
+
+### Learning implementation (`mylearning/`)
+
+- `start`, `playTurn`, `getStatus`, `getWinner`, `getPlayers` are **`synchronized`**  
+- Coarse lock on the game object is the **correct** model here (turns are sequential by design)  
+- Board jump map is immutable after construction → no lock needed on Board  
+
+### Interview talk
+
+> “I’d synchronize `playTurn`. Finer locks don’t help — there is only one turn at a time.”
+
+---
+
+## 11. Extensions
 
 | Extension | Approach |
 | --- | --- |
@@ -281,7 +304,7 @@ snakeladder/
 
 ---
 
-## 11. Interview Q&A
+## 12. Interview Q&A
 
 **Where do snakes/ladders live?** On `Board` as a jump map. Game should not hardcode cell numbers.
 
@@ -293,13 +316,13 @@ snakeladder/
 
 **How would you test?** Seed the `Random`, or inject a `Dice` stub that returns a fixed sequence.
 
-**Thread safety?** Not relevant for a single local game loop. Don’t over-engineer.
+**Thread safety?** Synchronize `playTurn` — turn queue is shared. Coarse game lock is enough (see §10).
 
 **Snake vs Ladder as subclasses of Jump?** Fine if you want shared validation; not required. Direction rules differ, so separate types or factory methods both work.
 
 ---
 
-## 12. Common Mistakes
+## 13. Common Mistakes
 
 1. Putting snakes/ladders in the Game class → Board becomes anemic  
 2. Forgetting exact-win → player teleports past 100 and “wins” wrongly  
@@ -310,7 +333,7 @@ snakeladder/
 
 ---
 
-## 13. Check yourself
+## 14. Check yourself
 
 1. What happens at position 98 with roll 5 under exact win?  
 2. Who owns the jump map — Game or Board?  

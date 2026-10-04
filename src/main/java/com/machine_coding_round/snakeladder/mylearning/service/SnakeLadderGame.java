@@ -40,7 +40,11 @@ public class SnakeLadderGame {
         this.status = GameStatus.NOT_STARTED;
     }
 
-    public void start() {
+    /**
+     * Game is turn-based: one coarse lock on the game object is the right model.
+     * Concurrent playTurn() without sync could poll the same player twice.
+     */
+    public synchronized void start() {
         if (status != GameStatus.NOT_STARTED) {
             throw new IllegalStateException("Game already started or finished");
         }
@@ -50,7 +54,7 @@ public class SnakeLadderGame {
     /**
      * Play one turn for the current player. Returns a human-readable turn summary.
      */
-    public String playTurn() {
+    public synchronized String playTurn() {
         if (status != GameStatus.IN_PROGRESS) {
             throw new IllegalStateException("Game is not in progress");
         }
@@ -70,7 +74,6 @@ public class SnakeLadderGame {
 
         if (tentative > board.getSize()) {
             if (exactWinRequired) {
-                // bounce: stay put
                 log.append(from).append(") — need exact win, stay");
                 turnOrder.offer(current);
                 return log.toString();
@@ -100,29 +103,40 @@ public class SnakeLadderGame {
 
     /** Play until someone wins or maxTurns reached (safety). */
     public Player playUntilWinner(int maxTurns) {
-        if (status == GameStatus.NOT_STARTED) {
-            start();
+        synchronized (this) {
+            if (status == GameStatus.NOT_STARTED) {
+                start();
+            }
         }
         int turns = 0;
-        while (status == GameStatus.IN_PROGRESS && turns < maxTurns) {
-            System.out.println(playTurn());
-            turns++;
+        while (true) {
+            String line;
+            synchronized (this) {
+                if (status != GameStatus.IN_PROGRESS || turns >= maxTurns) {
+                    break;
+                }
+                line = playTurn();
+                turns++;
+            }
+            System.out.println(line);
         }
-        if (winner == null) {
-            throw new IllegalStateException("No winner within " + maxTurns + " turns");
+        synchronized (this) {
+            if (winner == null) {
+                throw new IllegalStateException("No winner within " + maxTurns + " turns");
+            }
+            return winner;
         }
-        return winner;
     }
 
-    public GameStatus getStatus() {
+    public synchronized GameStatus getStatus() {
         return status;
     }
 
-    public Player getWinner() {
+    public synchronized Player getWinner() {
         return winner;
     }
 
-    public List<Player> getPlayers() {
+    public synchronized List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
     }
 
@@ -130,3 +144,4 @@ public class SnakeLadderGame {
         return board;
     }
 }
+

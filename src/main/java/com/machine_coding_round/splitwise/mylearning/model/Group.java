@@ -1,13 +1,18 @@
 package com.machine_coding_round.splitwise.mylearning.model;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class Group {
     private final String id;
     private final String name;
+    @Getter(lombok.AccessLevel.NONE)
     private final List<String> memberIds = new ArrayList<>();
+    @Getter(lombok.AccessLevel.NONE)
     private final List<String> expenseIds = new ArrayList<>();
 
     public Group(String id, String name) {
@@ -27,14 +32,6 @@ public class Group {
 
     public boolean hasMember(String userId) {
         return memberIds.contains(userId);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<String> getMemberIds() {

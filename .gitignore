@@ -2,6 +2,12 @@ target/
 
 ### H2 local database ###
 data/
+
+### Local study notes (do not push to GitHub) ###
+fundamentals/oops-notes.md
+fundamentals/design-patterns-notes.md
+fundamentals/concurrency-notes.md
+
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

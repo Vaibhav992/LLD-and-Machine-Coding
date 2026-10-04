@@ -397,11 +397,32 @@ splitwise/
 
 ## 11. Concurrency
 
-Without locks, two threads updating the same pair can lose an update (classic read-modify-write race).
+Without locks, two threads updating the same pair can lose an update (classic read-modify-write race on mirrored balances).
 
-**Learning fix:** `synchronized` on BalanceSheet and service write methods.
+### What can race
 
-**Interview talk:** lock per user-pair, or treat expense log as source of truth and derive balances (self-healing).
+| Scenario | Risk |
+| --- | --- |
+| Two `addExpense` on Alice↔Bob | Lost update on balance |
+| `addExpense` + `settleUp` same pair | Half-applied mirror (A→B updated, B→A not) |
+| `getBalance` during update | Dirty / inconsistent read |
+
+### Learning implementation (`mylearning/`)
+
+- `BalanceSheet` uses **`ReentrantReadWriteLock`** — many concurrent reads, exclusive writes  
+- `SplitwiseService` mutating APIs are **`synchronized`** (users/groups/expenses maps)  
+- Demo: `ConcurrencyDemo` — N threads add equal expenses; final Bob→Alice must equal expected  
+
+```powershell
+.\mvnw -q compile "exec:java" "-Dexec.mainClass=com.machine_coding_round.splitwise.mylearning.ConcurrencyDemo"
+```
+
+### Scale-up answers (say in interview)
+
+1. **Ordered pair locks** — lock `(min(id1,id2), max(...))` so unrelated pairs run in parallel; prevents deadlock  
+2. **Append-only expense log** — single writer folds balances; self-healing  
+
+Interview track: no locks — state the race and the sync plan.
 
 ---
 
