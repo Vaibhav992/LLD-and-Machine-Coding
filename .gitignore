@@ -7,6 +7,7 @@ data/
 fundamentals/oops-notes.md
 fundamentals/design-patterns-notes.md
 fundamentals/concurrency-notes.md
+fundamentals/rate-limiting-notes.md
 
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

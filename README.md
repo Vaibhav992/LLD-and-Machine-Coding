@@ -7,6 +7,7 @@ Local-only study notes (gitignored, not pushed to GitHub):
 - `fundamentals/oops-notes.md`
 - `fundamentals/design-patterns-notes.md`
 - `fundamentals/concurrency-notes.md`
+- `fundamentals/rate-limiting-notes.md`
 
 ## Problems
 
@@ -35,3 +36,4 @@ Local-only study notes (gitignored, not pushed to GitHub):
 .\mvnw -q compile "exec:java" "-Dexec.mainClass=com.machine_coding_round.splitwise.mylearning.ConcurrencyDemo"
 .\mvnw -q "exec:java" "-Dexec.mainClass=com.machine_coding_round.filesystem.mylearning.ConcurrencyDemo"
 ```
+
