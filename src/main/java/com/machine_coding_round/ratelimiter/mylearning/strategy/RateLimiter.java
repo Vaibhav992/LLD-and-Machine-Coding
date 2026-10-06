@@ -1,5 +1,7 @@
-package com.machine_coding_round.ratelimiter.mylearning;
+package com.machine_coding_round.ratelimiter.mylearning.strategy;
 
-public interface RateLimiter{
-    boolean allow(String userId);
+import com.machine_coding_round.ratelimiter.mylearning.model.RateLimitResult;
+
+public interface RateLimiter {
+    RateLimitResult allow(String userId);
 }

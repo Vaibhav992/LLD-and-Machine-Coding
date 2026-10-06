@@ -1,11 +1,12 @@
-package com.machine_coding_round.ratelimiter.mylearning.strategy;
+package com.machine_coding_round.ratelimiter.forInterview;
 
-import com.machine_coding_round.ratelimiter.mylearning.clock.Clock;
-import com.machine_coding_round.ratelimiter.mylearning.model.RateLimitResult;
+import com.machine_coding_round.ratelimiter.forInterview.clock.Clock;
+import com.machine_coding_round.ratelimiter.forInterview.exception.RateLimiterException;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/** 45-min version: fixed boxes, one counter per user. */
 public class FixedWindowRateLimiter implements RateLimiter {
 
     private final int limit;
@@ -14,17 +15,19 @@ public class FixedWindowRateLimiter implements RateLimiter {
     private final Map<String, WindowState> users = new ConcurrentHashMap<>();
 
     public FixedWindowRateLimiter(int limit, long windowMs, Clock clock) {
-        RateLimitChecks.positive(limit, "limit");
-        RateLimitChecks.positive(windowMs, "windowMs");
-        RateLimitChecks.clock(clock);
+        if (limit <= 0 || windowMs <= 0 || clock == null) {
+            throw new RateLimiterException("limit, windowMs and clock are required");
+        }
         this.limit = limit;
         this.windowMs = windowMs;
         this.clock = clock;
     }
 
     @Override
-    public RateLimitResult allow(String userId) {
-        RateLimitChecks.user(userId);
+    public boolean allow(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new RateLimiterException("userId is required");
+        }
         long now = clock.nowMillis();
         WindowState state = users.computeIfAbsent(userId, id -> new WindowState());
         synchronized (state) {
@@ -34,10 +37,10 @@ public class FixedWindowRateLimiter implements RateLimiter {
                 state.count = 0;
             }
             if (state.count >= limit) {
-                return RateLimitResult.deny();
+                return false;
             }
             state.count++;
-            return RateLimitResult.allow();
+            return true;
         }
     }
 
